@@ -1,0 +1,164 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
+
+        while (running) {
+            System.out.println("Seleccione una opción:");
+            System.out.println("1. Pirámide de Fibonacci");
+            System.out.println("2. Mayor y Promedio de Números");
+            System.out.println("3. Detalle de Canales y Costo");
+            System.out.println("4. Contar Vocales");
+            System.out.println("5. Salir");
+
+            int option = scanner.nextInt();
+            scanner.nextLine();
+
+            if (option == 1) {
+                System.out.print("Introduce el límite de la pirámide de Fibonacci: ");
+                int limit = scanner.nextInt();
+                scanner.nextLine(); 
+                printFibonacciPyramid(limit);
+            } else if (option == 2) {
+                List<Integer> numbers = new ArrayList<>();
+                String continueInput;
+                do {
+                    System.out.print("Introduce un número entero: ");
+                    numbers.add(scanner.nextInt());
+                    scanner.nextLine(); 
+                    System.out.print("¿Desea ingresar otro número? (SI/NO): ");
+                    continueInput = scanner.nextLine();
+                } while (continueInput.equalsIgnoreCase("SI"));
+
+                if (!numbers.isEmpty()) {
+                    int max = numbers.stream().mapToInt(v -> v).max().orElseThrow();
+                    double average = numbers.stream().mapToInt(v -> v).average().orElse(0.0);
+                    System.out.println("Número mayor ingresado: " + max);
+                    System.out.println("Número promedio ingresado: " + average);
+                } else {
+                    System.out.println("No se ingresaron números.");
+                }
+            } else if (option == 3) {
+                System.out.print("Ingrese el nombre del cliente: ");
+                String clientName = scanner.nextLine();
+
+                int hdChannels = 0;
+                int normalChannels = 0;
+                double subtotal = 0;
+                double boxCost = 0;
+
+                String channelType;
+                String addAnother;
+                do {
+                    System.out.print("Ingrese el tipo de canal (HD/NORMAL): ");
+                    channelType = scanner.nextLine().toUpperCase();
+                    if (channelType.equals("HD")) {
+                        hdChannels++;
+                        subtotal += 30; 
+                    } else if (channelType.equals("NORMAL")) {
+                        normalChannels++;
+                        subtotal += 20;
+                    } else {
+                        System.out.println("Tipo de canal inválido. Use 'HD' o 'NORMAL'.");
+                    }
+
+                    System.out.print("¿Desea ingresar otro canal? (SI/NO): ");
+                    addAnother = scanner.nextLine();
+                } while (addAnother.equalsIgnoreCase("SI"));
+
+                System.out.print("Ingrese el tipo de caja digital (LIGHTBOX/HDBOX/DVRBOX): ");
+                String boxType = scanner.nextLine().toUpperCase();
+                if (boxType.equals("LIGHTBOX")) {
+                    boxCost = 50;
+                } else if (boxType.equals("HDBOX")) {
+                    boxCost = 100;
+                } else if (boxType.equals("DVRBOX")) {
+                    boxCost = 150;
+                } else {
+                    System.out.println("Tipo de caja inválido. Se asumirá LIGHTBOX.");
+                    boxCost = 50;
+                }
+
+                double total = subtotal + boxCost;
+                double tax = total * 0.15;
+                double totalToPay = total + tax;
+
+                System.out.println("Detalle:");
+                System.out.println("Canales NORMALES: " + normalChannels);
+                System.out.println("Canales HD: " + hdChannels);
+                System.out.println("Subtotal: " + subtotal);
+                System.out.println("Costo de Caja Digital: " + boxCost);
+                System.out.println("Impuesto (15%): " + tax);
+                System.out.println("Total a pagar: " + totalToPay);
+            } else if (option == 4) {
+                System.out.print("Ingrese una cadena de texto: ");
+                String input = scanner.nextLine();
+                int vowelCount = countVowels(input);
+                System.out.println("Cantidad de vocales minúsculas: " + vowelCount);
+            } else if (option == 5) {
+                System.out.println("HASTA LUEGO");
+                running = false;
+            } else {
+                System.out.println("Opción inválida. Por favor, elija una opción del menú.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    public static void printFibonacciPyramid(int limit) {
+        if (limit < 1) {
+            System.out.println("El límite debe ser al menos 1.");
+            return;
+        }
+
+        int count = limit * (limit + 1) / 2;
+        int[] fibonacci = generateFibonacci(count);
+
+        int index = 0;
+        for (int i = 1; i <= limit; i++) {
+            for (int j = 0; j < (limit - i); j++) {
+                System.out.print("  ");
+            }
+            for (int j = 0; j < i; j++) {
+                System.out.print(fibonacci[index] + " ");
+                index++;
+            }
+            System.out.println();
+        }
+    }
+
+    public static int[] generateFibonacci(int count) {
+        int[] fibonacci = new int[count];
+        if (count > 0) fibonacci[0] = 0;
+        if (count > 1) fibonacci[1] = 1;
+
+        for (int i = 2; i < count; i++) {
+            fibonacci[i] = fibonacci[i - 1] + fibonacci[i - 2];
+        }
+        return fibonacci;
+    }
+
+    public static int countVowels(String input) {
+        int count = 0;
+        for (char c : input.toCharArray()) {
+            switch (c) {
+                case 'a':
+                case 'e':
+                case 'i':
+                case 'o':
+                case 'u':
+                    count++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return count;
+    }
+}
